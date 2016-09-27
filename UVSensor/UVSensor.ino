@@ -59,16 +59,28 @@ void presentation()  {
 
 void setup()  {
 analogReference(INTERNAL);             // For battery sensing
+pinMode(D4, OUTPUT);
 }
 
 void loop()
 {
+  
+  
+  //ANALOG PINS FOR UV/LIGHT/BAT A0, A1, A2 ???
 
+  //Set power on digital pin for lightsensor.
+  digitalWrite(D4 , HIGH);
+  //Read UV
   sendUVIRMeasurements(true);
   wait(500);
+  //Read Light
   readLightLevel();
   wait(500);
+  //Read batteries
   batM();
+  //Set digital pin low to save power.
+  digitalWrite(D4 , LOW);
+  //Sleep!
   sleep(SLEEP_TIME);
   
 }
