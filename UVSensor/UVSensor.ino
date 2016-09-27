@@ -21,7 +21,7 @@
 
 unsigned long SLEEP_TIME = 600000; // Sleep time between reads (in milliseconds)
 #define SKETCH_NAME "UV #19"                // Change to a fancy name you like
-#define SKETCH_VERSION "1.0"                    // Your version
+#define SKETCH_VERSION "1.3"                    // Your version
 
 MyMessage uvMsg(CHILD_ID_UV, V_UV);
 MyMessage msg(CHILD_ID_LIGHT, V_LIGHT_LEVEL);
@@ -49,7 +49,7 @@ int BATTERY_SENSE_PIN = A0;                       // select the input pin for th
 
 void presentation()  {
   // Send the sketch version information to the gateway and Controller
-  sendSketchInfo("UV Sensor", "1.3");
+  sendSketchInfo(SKETCH_NAME, SKETCH_VERSION);
 
   // Register all sensors to gateway (they will be created as child devices)
   present(CHILD_ID_UV, S_UV);
