@@ -9,7 +9,7 @@
 #include <SPI.h>
 #include <MySensors.h>  
 
-#define UV_PIN 0
+#define UV_PIN 2
 #define CHILD_ID_UV 0
 
 #define         READ_SAMPLE_INTERVAL         (10)    //define how many samples you are going to take in normal operation
