@@ -27,7 +27,6 @@ unsigned long SLEEP_TIME = 86400000; // Sleep time between reports (in milliseco
 int dayCounter = BATTERY_REPORT_DAY;
 int irtCounter = 0;
 bool interruptReturn = false; // "false" will make the first loop disregard high output from HV-505 (from start-up) and make a battery report instead.
-int oldTripped = 0;
 int tripped = 0;
 
 
@@ -63,8 +62,9 @@ void loop()
   if (interruptReturn == true) {    // Woke up by changing pin
 
     tripped = digitalRead(PIR_PIN);
-    if (tripped != oldTripped) {
+    if (tripped == 1) {
     send(msg.set("1"));
+    tripped = 0;
     }
 
     irtCounter++;
@@ -86,14 +86,9 @@ void loop()
 #ifdef MY_DEBUG
   Serial.println("5 sec");
 #endif
-  sleep(10000);  // Make sure everything is stable before start to sleep with interrupts. (don't use "wait()" here). Tests shows false trip ~2s after battery report otherwise.
+  sleep(5000);  // Make sure everything is stable before start to sleep with interrupts. (don't use "wait()" here). Tests shows false trip ~2s after battery report otherwise.
 
-  //Optional, can be done in the controller.
-  //Make sure the sleep is longer than the trigger return time.
-  tripped = 0;
-  send(msg.set("0"));
-
-  // Sleep until interrupt comes in on motion sensor or sleep time passed.
+ // Sleep until interrupt comes in on motion sensor or sleep time passed.
   interruptReturn = sleep(digitalPinToInterrupt(PIR_PIN), RISING, SLEEP_TIME);
 }
 
