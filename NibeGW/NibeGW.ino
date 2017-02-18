@@ -148,7 +148,9 @@ void presentation()
     sendSketchInfo(SketchName, SketchVer);
 
     // Register all sensors to gw (they will be created as child devices)
-    // Following is a list of possible sensors from Nibe and suggestions how to send them;
+    // Following is a list of possible sensors from Nibe;
+    // https://github.com/openhab/openhab1-addons/blob/master/bundles/binding/org.openhab.binding.nibeheatpump/README.md
+    // Below is my setup but this can offcourse be changed. If so, you need to create new childs and send routines in sendMessage(); 
     present(CHILD_ID, S_MOTION);
 }
 
