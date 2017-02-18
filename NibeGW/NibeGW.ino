@@ -1,9 +1,55 @@
 /**
+ *  This ARDUINO application listening data from Nibe F1145/F1245 heat pumps (RS485 bus - MODBUS)
+ *  and send valid frames to Mysensors network. 
+ *  The sketch uses AltSoftSerial (https://www.pjrc.com/teensy/td_libs_AltSoftSerial.html) to read 1 serial and send debug over the other.
+ *  AltSoftSerial uses the same pins as the Nrf24l01+ radio so these needs to be redefied!
+ 
+ *  Wire the radio as usual https://www.mysensors.org/build/connect_radio
+ *  
+ *
+ *
+ *  Author: sundberg84 @ www.mysensors.org, openhardware.io
+ *  This is a fork and development from NibeGW in openhab.
+ *  Original Author: pauli.anttila@gmail.com
+ *  https://github.com/openhab/openhab1-addons/tree/master/bundles/binding/org.openhab.binding.nibeheatpump
+ *
+ *  Below follows the original notes from the original author:
+ *  Note that this modified code only uses MySensors network and does not send using ethernet/udp!
+ *
+ * openHAB, the open Home Automation Bus.
+ * Copyright (c) 2010-2015, openHAB.org <admin@openhab.org>
+ *
+ * See the contributors.txt file in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see <http://www.gnu.org/licenses>.
+ *
+ * Additional permission under GNU GPL version 3 section 7
+ *
+ * If you modify this Program, or any covered work, by linking or
+ * combining it with Eclipse (or a modified version of that library),
+ * containing parts covered by the terms of the Eclipse Public License
+ * (EPL), the licensors of this Program grant you additional permission
+ * to convey the resulting work.
+ *
+ * ----------------------------------------------------------------------------
+ *
  *  This ARDUINO application listening data from Nibe F1145/F1245 heat pumps (RS485 bus)
- *  and send valid frames to Mysensors network.
+ *  ~~and send valid frames to configurable IP/port address by UDP packets.~~
  *  Application also acknowledge the valid packets to heat pump.
  *
- *  RS-485 shield or module connected to arduino are required.
+ *  ~~Ethernet and RS-485 arduino shields are required~~
  *
  *  Serial settings: 9600 baud, 8 bits, Parity: none, Stop bits 1
  *
@@ -27,10 +73,9 @@
  *  are that the Heat pump stops producing hot water (default setting)
  *  and/or reduces the room temperature.
  *
- *  Author Andreas Sundberg (sundberg84) www.mysensors.org
- *  
- *  This is a fork and development from NibeGW in openhab.
- *  Original Author: pauli.anttila@gmail.com
+ *  Author: pauli.anttila@gmail.com
+ *
+ *
  *  2.11.2013	v1.00	Initial version.
  *  3.11.2013   v1.01   
  */
@@ -39,11 +84,11 @@
 
 // Enable and select radio type attached
 #define MY_RADIO_NRF24
-//#define MY_RADIO_RFM69
 
 #include <MySensors.h>
 #include <SPI.h> 
 #include <avr/wdt.h>
+#include <AltSoftSerial.h>
 
 #define SKETCH_NAME "Nibe Heatpump Sensor"
 #define SKETCH_MAJOR_VER "1"
@@ -81,6 +126,7 @@ void setup()  {
   digitalWrite(directionPin, LOW);
   
   Serial.begin(9600, SERIAL_8N1);
+  altSerial.begin(9600);
   
   #ifdef MY_DEBUG
   if (verbose) {
@@ -311,15 +357,14 @@ void sendUdpPacket(const byte* const data, int len) {
   }
   #endif
   
-  udp.beginPacket(target_ip, udp_port);
-  udp.write(data, len);
-  udp.endPacket();
+//OUTPUT HÄR (msg.send)
+ 
 }
 
 #ifdef MY_DEBUG
 void debugPrint(char* data) {
-  udp.beginPacket(target_ip, 50000);
-  udp.write(data);
-  udp.endPacket();
+
+    altSerial.println(data);
+ 
 }
 #endif
