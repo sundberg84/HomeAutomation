@@ -28,7 +28,7 @@ MyMessage pcMsg(CHILD_ID,V_VAR1);
 #define SKETCH_NAME "Energy Meter #8"                // Change to a fancy name you like
 #define SKETCH_VERSION "1.4"                    // Your version
 
-unsigned long SLEEP_TIME = 780000UL;            // Sleep time (in milliseconds).
+unsigned long SLEEP_TIME = 900000UL;            // Sleep time (in milliseconds).
 
 //=========================
 // BATTERY VOLTAGE DIVIDER SETUP
@@ -97,7 +97,6 @@ void loop()
       }
     }    
     lastSend = currentTime;
-  
     
     sleep(SLEEP_TIME);
 }
@@ -112,8 +111,9 @@ void receive(const MyMessage &message) {
 }
 
 void onPulse()     
-{ 
+{       
   pulseCount++;
+  wait(10);
 }
 
 void batM() //The battery calculations
