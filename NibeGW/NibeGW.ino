@@ -25,7 +25,11 @@
 *Under Send-tabben väljer man +crc under EOL och sedan MOdbus16 från dropdown-menyn.
 
 *Sedan matar jag in 0x01 0x03 0x9C 0x44 0x00 0x01 i send-rutan.
-*[0x01] till master, [0x03] Read holding register dvs läs, [0x9C][0x44] är 40004 som betyder läs utomhustemperaturen och så [0x00][0x01] vilket jag antar är hur långt svar jag vill ha(???), hur många register jag vill läsa vilket alltid är 16-bitars register(???). Eller så beror det på vilket typ av register det är.
+*[0x01] till master, [0x03] Read holding register dvs läs, [0x9C][0x44] är 40004 som betyder läs utomhustemperaturen och så
+*[0x00][0x01] vilket jag antar är hur långt svar jag vill ha(???), hur många register jag vill läsa vilket alltid är 16-bitars 
+*register(???). Eller så beror det på vilket typ av register det är.
+*Svaret blir: 01 03 02 00 21 78 5C [0x01] från master, [0x03] du ville läsa, [0x02] du får här två bytes med svar, 
+*[0x00][0x21] utomhustemperaturen är 3.3 grader, [0x78][0x5C] är CRC för felberäkning på meddelandet.
 *-----------------------------------Notes----------------------------------
 *
 * Author: sundberg84 @ www.mysensors.org, openhardware.io
@@ -121,7 +125,7 @@
 
 //Define debug options
 #ifdef MY_DEBUG
-char verbose = 0; //(Possible 0-3)
+char verbose = 2; //(Possible 0-3)
 char debug_buf[100];
 #endif
 
