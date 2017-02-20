@@ -1,5 +1,5 @@
 // Enable debug prints
-//#define MY_DEBUG
+#define MY_DEBUG
 
 // Enable and select radio type attached
 #define MY_RADIO_NRF24
@@ -9,7 +9,7 @@
 #define MY_BAUD_RATE 9600
 
 #define MY_NODE_ID 18
-#define SKETCH_NAME "Ringklocka Hall #18"
+#define SKETCH_NAME "Ringklocka #18"
 #define SKETCH_VERSION "1.0"
 
 #include <MySensors.h>
@@ -56,20 +56,17 @@ void loop()
 
 #ifdef MY_DEBUG
   Serial.print("Wakeupcall: "); Serial.println(interruptReturn);
-    Serial.print("digitalRead(PIR_PIN): "); Serial.println(digitalRead(PIR_PIN));
 #endif
 
   if (interruptReturn == true) {    // Woke up by changing pin
-
     send(msg.set("1"));
+    }
 
     irtCounter++;
     if (irtCounter >= BATTERY_REPORT_BY_IRT_CYCLE) {
       irtCounter = 0;
       sendBatteryReport();
     }
-
-  }
 
   if (interruptReturn == false) { // Woke up by timer  (or it's the first run)
     dayCounter++;
@@ -84,7 +81,7 @@ void loop()
 #endif
   sleep(3000);  // Make sure everything is stable before start to sleep with interrupts. (don't use "wait()" here). Tests shows false trip ~2s after battery report otherwise.
   send(msg.set("0"));
-  sleep(5000);  // Make sure everything is stable before start to sleep with interrupts. (don't use "wait()" here). Tests shows false trip ~2s after battery report otherwise.
+  sleep(2000);  // Make sure everything is stable before start to sleep with interrupts. (don't use "wait()" here). Tests shows false trip ~2s after battery report otherwise.
 
  // Sleep until interrupt comes in on motion sensor or sleep time passed.
   interruptReturn = sleep(digitalPinToInterrupt(PIR_PIN), RISING, SLEEP_TIME);

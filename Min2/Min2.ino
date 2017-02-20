@@ -1,4 +1,4 @@
-#define MY_DEBUG
+//#define MY_DEBUG
 
 #define MY_RADIO_NRF24
 #define MY_NODE_ID 8
@@ -57,10 +57,10 @@ void presentation() {
 void setup()
 {
 
+  Serial.begin(115200);  Serial.println("start");
   analogReference(INTERNAL);             // For battery sensing
 
   delay(500); // Allow time for radio if power used as reset
-  request(CHILD_ID, V_VAR1);
 
   pinMode(DIGITAL_INPUT_SENSOR, INPUT);
 
@@ -71,38 +71,10 @@ void setup()
 
 void loop()
 {
-  unsigned long currentTime = millis();
 
-    //See if we have the counter/pulse from Domoticz - and ask for it if we dont.
-    if (!pcReceived && (currentTime - lastSend > 5000)) {      
-      request(CHILD_ID, V_VAR1);
-#ifdef MY_DEBUG
-    Serial.println("Req p-cnt");
-#endif
-      lastSend=currentTime;
-      return;
-    }
-    
-    if (!pcReceived) {
-      return;
-    }
-  
-  
-    // Pulse cout has changed
-    if (pulseCount > oldPulseCount + 333) {
-      send(pcMsg.set(pulseCount));  // Send pulse count value to gw 
-      double kwh = ((double)pulseCount/((double)PULSE_FACTOR));     
-      oldPulseCount = pulseCount;
-      if (kwh != oldKwh) {
-        send(kwhMsg.set(kwh, 4));  // Send kwh value to gw 
-        oldKwh = kwh;
-        batM();
-      }
-    }    
-    lastSend = currentTime;
-  
-    
-sleep(SLEEP_TIME * 5);
+  Serial.println(digitalRead(DIGITAL_INPUT_SENSOR));
+    Serial.println(pulseCount);
+  sleep(20000); //For some sick reason the timing is off, and needs to me multiplied with three to be somewhat correct.
 
 }
 
