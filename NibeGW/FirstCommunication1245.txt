@@ -1,3 +1,6 @@
+Arduino:
+sprintf(debug_buf, "%02x", b);
+
 d4
 bf
 29

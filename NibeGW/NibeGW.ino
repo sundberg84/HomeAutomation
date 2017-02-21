@@ -196,7 +196,8 @@ byte b = PumpSerial.read();
  #ifdef MY_DEBUG
 if (verbose > 2) {
 sprintf(debug_buf, "%02x", b);
-debugPrint(debug_buf);
+//debugPrint(debug_buf);
+debugPrint(b)
 }
 #endif
 
