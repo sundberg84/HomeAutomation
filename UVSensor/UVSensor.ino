@@ -3,36 +3,73 @@
 
 // Enable and select radio type attached
 #define MY_RADIO_NRF24
-//#define MY_RADIO_RFM69
-#define MY_NODE_ID 19
+#define MY_NODE_ID 19                      //Fixed node ID
 
 #include <SPI.h>
 #include <MySensors.h>  
 
-#define UV_PIN 2
-#define CHILD_ID_UV 0
-
-#define         READ_SAMPLE_INTERVAL         (10)    //define how many samples you are going to take in normal operation
-#define         READ_SAMPLE_TIMES            (5)     //define the time interal(in milisecond) between each samples in  
-#define         VREF 3.3f
-
-#define CHILD_ID_LIGHT 0
-#define LIGHT_SENSOR_ANALOG_PIN 1
-
-unsigned long SLEEP_TIME = 600000; // Sleep time between reads (in milliseconds)
+//SketchInfo MySensors
 #define SKETCH_NAME "UV #19"                // Change to a fancy name you like
-#define SKETCH_VERSION "1.3"                    // Your version
+#define SKETCH_VERSION "1.4"                // Your version  
 
-MyMessage uvMsg(CHILD_ID_UV, V_UV);
-MyMessage msg(CHILD_ID_LIGHT, V_LIGHT_LEVEL);
+//Light
+#define CHILD_ID_LIGHT 1
+#define LIGHT_SENSOR_ANALOG_PIN A2
+#define LIGHT_SENSOR_POWER_PIN 4
+MyMessage light_Msg(CHILD_ID_LIGHT, V_LIGHT_LEVEL);
 
-int lastLightLevel;
-int exValue [12] = { 50, 227, 318, 408, 503, 606, 696, 795, 881, 976, 1079, 1170};
 
-float last_UVIndex = 0;
-uint16_t uvIndexValue [12] = { 50, 227, 318, 408, 503, 606, 696, 795, 881, 976, 1079, 1170}; 
+//===================================================
+// UVM30A ultraviolet detector.
+//
+// Thanks to core_c @ mysensors.org for code and info!
+// The sensor's VCC is connected to +5V
+//
+// At first glance, the datasheet is not entirely making sense:
+//  "输出电压" translates to "Output voltage", with a value of: DC 0—1V.
+//  So the sensor will never output/measure the 2 highest values listed in the graph & table of the datasheet (1079 and 1170+).
+//  The datasheet explains it: "(对应 UV 指数 0-10)" translates to "(corresponding to UV index 0-10)".  Fair enough.
+// 
+//  "测试精度" translates to: "Test accuracy", with a value of: ±1 UV INDEX
+//  That is not very accurate on a range 0-10. Example: if the real UV-index is 4, you could measure 3, or 5.
+//  For that reason we take an average of multiple samples, to get a better measurement.
 
-//=========================
+#define UV_PIN A1
+#define CHILD_ID_UV 0
+MyMessage uv_Msg(CHILD_ID_UV, V_UV);
+const int UV_threshold[12] = {50, 227, 318, 408, 503, 606, 696, 795, 881, 976, 1079, 1170}; // // The list of UV index thresholds in units of mV
+
+// The read value is a 10-bit value, ranging from 0 to 2^10-1 (0 to 1023).
+// The reference voltage on the input pin is set to 1.1V.
+// That voltage is spread out over the 1024 possible values of a sample.
+// So our achieved resolution equals (1.1 Volts / 1024) = 0.00107421875 Volt.
+// The UVM30A sensor datasheet lists all UV-index values according to measured milli-Volts.
+const float SAMPLE_TO_MV = (1.1*1000)/1024;  // mV per sample-resolution
+
+uint16_t UV_value; 
+uint16_t UV_index;        // the UV index
+uint16_t UV_index_f;      // the fractional part of the UV index
+
+// Compiler directives for averiging the UV-sensor readings
+// (Change the values of UV_AVERAGE_T & UV_AVERAGE_N according to your own taste).
+#define UV_AVERAGE_T 4000 // Sample interval duration in milliseconds..  (1 <= T <= 60000)
+#define UV_AVERAGE_N 10   // ..During that interval, N samples are taken, and averaged.    (1 <= N <= 100, must be <>0)
+
+#if UV_AVERAGE_T < 1      // Sanity check. It must be dummy proof
+#define UV_AVERAGE_T 1
+#endif
+#if UV_AVERAGE_N < 1      // Sanity check. It must be dummy proof
+#define UV_AVERAGE_N 1    // This value must be <>0 at all times, because we divide by it
+#endif
+
+// calculate once, use many times in the loop()
+const float UV_AVERAGE_N_RP = 1.0 / UV_AVERAGE_N;
+const uint32_t UV_AVERAGE_D = UV_AVERAGE_T * UV_AVERAGE_N_RP;
+//===================================================
+
+//SleepTime
+unsigned long SLEEP_TIME = 600000; // Sleep time between reads (in milliseconds)
+
 // BATTERY VOLTAGE DIVIDER SETUP
 // 1M, 470K divider across battery and using internal ADC ref of 1.1V
 // Sense point is bypassed with 0.1 uF cap to reduce noise at that point
@@ -44,7 +81,7 @@ uint16_t uvIndexValue [12] = { 50, 227, 318, 408, 503, 606, 696, 795, 881, 976, 
 int batteryPcnt = 0;                              // Calc value for battery %
 int batLoop = 0;                                  // Loop to help calc average
 int batArray[3];                                  // Array to store value for average calc.
-int BATTERY_SENSE_PIN = A0;                       // select the input pin for the battery sense point
+int BATTERY_SENSE_PIN = A0;                       // select the input pin for the battery sense point (14=A0)
 //=========================
 
 void presentation()  {
@@ -58,114 +95,110 @@ void presentation()  {
 }
 
 void setup()  {
-analogReference(INTERNAL);             // For battery sensing
-pinMode(D4, OUTPUT);
+
+analogReference(INTERNAL);  
+
+pinMode(LIGHT_SENSOR_POWER_PIN, OUTPUT);
+pinMode(UV_PIN, INPUT);
+pinMode(LIGHT_SENSOR_ANALOG_PIN, INPUT); 
 }
 
 void loop()
 {
-  
-  
-  //ANALOG PINS FOR UV/LIGHT/BAT A0, A1, A2 ???
 
-  //Set power on digital pin for lightsensor.
-  digitalWrite(D4 , HIGH);
-  //Read UV
-  sendUVIRMeasurements(true);
-  wait(500);
-  //Read Light
-  readLightLevel();
-  wait(500);
-  //Read batteries
-  batM();
-  //Set digital pin low to save power.
-  digitalWrite(D4 , LOW);
+  digitalWrite(LIGHT_SENSOR_POWER_PIN, HIGH);  //Set power on digital pin for lightsensor.
+  wait(500); //Wait 500ms to make sure lightsensor is powered and stable.  
+
+  processUV();   //Read UV
+
+  readLightLevel();   //Read Light
+  
+  digitalWrite(LIGHT_SENSOR_POWER_PIN, LOW); // Set power for lightsensor off to save power.     
+
+  BatteryCalculation();   //Read batteries
+  
   //Sleep!
-  sleep(SLEEP_TIME);
+  sleep(SLEEP_TIME);  
+}
+
+void readLightLevel()      {   
+  int lightLevel = (1023-analogRead(LIGHT_SENSOR_ANALOG_PIN))/10.23; //To get a value ranging from 0 (dark) to 100 (bright).
+
+ #ifdef MY_DEBUG
+  Serial.print("Light: "); Serial.println(lightLevel);
+ #endif   
+      send(light_Msg.set(lightLevel));
+ 
+}
+
+//===================================================
+// Process a UV measurement:
+// read an average value from the UV detector.
+// The average consists of N samples taken during a T milliseconds interval.
+//===================================================
+void processUV() {
+  // Set the reference voltage for sampling
+  // For our ATmega328 Nano: INTERNAL = 1.1V, DEFAULT = 5V
+  // After using analogReference(), the first few samples may not be accurate (according to the Arduino language reference),
+  // and that is why we read a few dummy samples before starting the actual measurement.
+  // NOTE: If you change the next statement, beware to adjust the value of SAMPLE_TO_MV too.
   
-}
+  for (int i=0; i<10; i++) UV_value = analogRead(UV_PIN);  // ignore the possibly inaccurate samplevalues.
 
-void readLightLevel()      
-{     
-  int lightLevel = (1023-analogRead(LIGHT_SENSOR_ANALOG_PIN))/10.23; 
-  Serial.print("Light: ");
-  Serial.println(lightLevel);
-  if (lightLevel != lastLightLevel) {
-      send(msg.set(lightLevel));
-      lastLightLevel = lightLevel;
+  #ifdef MY_DEBUG
+    Serial.print("UV raw values: [");  
+  #endif
+  uint32_t average = 0;
+  for (int i=0; i<UV_AVERAGE_N; i++) {
+    #ifdef MY_DEBUG
+      UV_value = analogRead(UV_PIN);
+      Serial.print(UV_value);  Serial.print(" ");
+      average += UV_value;
+    #else
+      average += analogRead(UV_PIN);
+    #endif
+    delay(UV_AVERAGE_D);
   }
-}
+  UV_value = average * UV_AVERAGE_N_RP;
+  #ifdef MY_DEBUG
+    Serial.print("]    avg: ");  Serial.print(UV_value);
+  #endif
 
-float UVRead()
-{
-  int i;
-  float rs = 0;
+  // We must convert sample-values into mV-values before we look up the UV-index.
+  UV_value *= SAMPLE_TO_MV;
 
-  for (i = 0; i < READ_SAMPLE_TIMES; i++) {
-    rs += analogRead(UV_PIN);
-    delay(READ_SAMPLE_INTERVAL);
-  }
+  #ifdef MY_DEBUG
+    Serial.print("     mV: ");  Serial.print(UV_value);
+  #endif
 
-  rs = rs / READ_SAMPLE_TIMES;
-
-  return rs;
-}
-
-float GetUVIndexFromVoltage(float voltage)
-{
-  float UV = 0;
-  int i;
-  for (i = 0; i < 12; i++)
-  {
-    if (voltage <= uvIndexValue[i])
-    {
-      UV = float(i);
-      break;
+  // determine the UV index
+  if (UV_value < UV_threshold[0]) {
+    // too low value  or  invalid value (in case the sensor is wrongly connected it always returns 0)
+    UV_index = 0;
+    UV_index_f = 0;
+  } else {
+    for (UV_index=11; UV_index>0; UV_index--) {
+      if (UV_value >= UV_threshold[UV_index]) break;
+    }
+    // calculate fractional part of the UV-index
+    if (UV_index == 11) {
+      // already at the maximum level; Displaying a fraction is meaningless
+      UV_index_f = 0;
+    } else {
+      UV_index_f = map(UV_value, UV_threshold[UV_index],UV_threshold[UV_index+1], 0,9);  // one decimal, so a number ranging 0 to 9
     }
   }
+  float UV_index_float = UV_index + (UV_index_f*0.1);  // that is the same as /10
 
-  //calculate 1 decimal if possible
-  if (i > 0) {
-    float vRange = float(uvIndexValue[i] - uvIndexValue[i - 1]);
-    float vCalc = voltage - uvIndexValue[i - 1];
-    UV += (1.0f / vRange) * vCalc - 1.0f;
-  }
-  return UV;
-}
-
-void sendUVIRMeasurements(bool force)
-{
-  bool tx = force;
-
-  float sensorValue = UVRead();
-  float voltage = sensorValue * (VREF / 1023.0f) * 1000.0f; //mV
-  if (voltage > 1170)
-    voltage = 1170;
-  //Serial.print("UV Analog reading: ");
-  //Serial.println(voltage,2);
-  float UVIndex = GetUVIndexFromVoltage(voltage);
-
-  float diffUV = abs(last_UVIndex - UVIndex);
-#ifdef MY_DEBUG
-  Serial.print(F("diffUV :")); Serial.println(diffUV);
-#endif
-  if (diffUV > 0.1) tx = true;
-
-  if (!tx)
-    return;
-
-  last_UVIndex = UVIndex;
-
-  Serial.print("UV: ");
-  Serial.println(UVIndex, 2);
-  send(uvMsg.set(UVIndex,2));
+  #ifdef MY_DEBUG
+    Serial.print("     UV index: ");  Serial.println(UV_index_float);
+  #endif
   
-  //Avarage 
-  // raUV.addValue(UVIndex);
-  // send(msgUV.set(raUV.getAverage(), 2));
+   send(uv_Msg.set(UV_index_float,1));
+  
 }
 
-void batM() //The battery calculations
+void BatteryCalculation() //The battery calculations
 {
    delay(500);
    // Battery monitoring reading
@@ -174,9 +207,16 @@ void batM() //The battery calculations
    
    // Calculate the battery in %
    float Vbat  = sensorValue * VBAT_PER_BITS;
-   int batteryPcnt = static_cast<int>(((Vbat-VMIN)/(VMAX-VMIN))*100.);
-   Serial.print("Battery percent: "); Serial.print(batteryPcnt); Serial.println(" %");  
+
+ #ifdef MY_DEBUG
+   Serial.print("Battery voltage (mV): "); Serial.print(Vbat); Serial.println(" %");  
+ #endif   
    
+   int batteryPcnt = static_cast<int>(((Vbat-VMIN)/(VMAX-VMIN))*100.);
+ #ifdef MY_DEBUG
+   Serial.print("Battery percent: "); Serial.print(batteryPcnt); Serial.println(" %");  
+ #endif 
+ 
    // Add it to array so we get an average of 3 (3x20min)
    batArray[batLoop] = batteryPcnt;
   
