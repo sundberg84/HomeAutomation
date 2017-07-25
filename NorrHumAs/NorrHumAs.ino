@@ -4,8 +4,10 @@
 // Enable and select radio type attached
 #define MY_RADIO_NRF24
 //#define MY_RADIO_RFM69
-#define MY_NODE_ID 14
-#define MY_PARENT_NODE_ID 100
+
+//Fixed ID/Parent?
+//#define MY_NODE_ID 14                     //To set a fixed ID for your node
+//#define MY_PARENT_NODE_ID 100             //To set a fixed parent for this node
 
 #include <SPI.h>
 #include <MySensors.h>  
