@@ -20,12 +20,17 @@ void setup() {
   //=========================
   // BATTERY MEASURER
   //Set internal ref to internal to be able to measure bat 0-1v
-  //Make sure this fits other sensors using analogread! If you have a sensor measuring 0-5v you need to change analogRef. before reading that sensor.
+  //Make sure this fits other sensors using analogRead()! 
+  //If you have a sensor reporting 0-5v you need to change analogReference() before reading that sensor.
+  
   analogReference(INTERNAL);
-
+  //DEFAULT: the default analog reference of 5 volts (on 5V Arduino boards) or 3.3 volts (on 3.3V Arduino boards)
+  //INTERNAL: an built-in reference, equal to 1.1 volts on the ATmega168 or ATmega328 and 2.56 volts on the ATmega8 (not available on the Arduino Mega)
+  //EXTERNAL: the voltage applied to the AREF pin (0 to 5V only) is used as the reference.
+  
   //Battery inital calc
   Serial.print("With Battery VMax (100%) = "); Serial.print(VMAX); Serial.print("volts and Vmin (0%) = "); Serial.print(VMIN); Serial.println(" volts");
-  Serial.print("Battert Procent 25%/50%/75% should be: "); Serial.print(((VMAX - VMIN) / 4) + VMIN); Serial.print("/"); Serial.print(((VMAX - VMIN) / 2) + VMIN); Serial.print("/"); Serial.println(VMAX - ((VMAX - VMIN) / 4));
+  Serial.print("Battert Percent 25%/50%/75% should be: "); Serial.print(((VMAX - VMIN) / 4) + VMIN); Serial.print("/"); Serial.print(((VMAX - VMIN) / 2) + VMIN); Serial.print("/"); Serial.println(VMAX - ((VMAX - VMIN) / 4));
   delay(1000);
   int sensorValue = analogRead(BATTERY_SENSE_PIN);
   delay(50);
