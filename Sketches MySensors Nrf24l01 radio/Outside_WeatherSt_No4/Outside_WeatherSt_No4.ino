@@ -1,5 +1,5 @@
 // Enable debug prints to serial monitor
-//#define MY_DEBUG 
+#define MY_DEBUG 
 
 // Enable and select radio type attached
 #define MY_RADIO_NRF24
@@ -263,6 +263,8 @@ if(currentMillis - previousMillis > interval) {
   analogReference(INTERNAL);
   wait(500);
   
+  Serial.println("1");  
+  
   // need to read the NVM compensation parameters
   BME280.readCompensationParams();
 
@@ -281,7 +283,7 @@ if(currentMillis - previousMillis > interval) {
 
   // Read out the data - must do this before calling the getxxxxx routines
   BME280.readMeasurements();
-
+ Serial.println("2"); 
   float temperature = BME280.getTemperatureMostAccurate();                    // must get temp first
   float humidity = BME280.getHumidityMostAccurate();
   float pressure_local = BME280.getPressureMostAccurate();                    // Get pressure at current location
