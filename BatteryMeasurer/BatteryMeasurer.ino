@@ -30,7 +30,7 @@ void setup() {
   
   //Battery inital calc
   Serial.print("With Battery VMax (100%) = "); Serial.print(VMAX); Serial.print("volts and Vmin (0%) = "); Serial.print(VMIN); Serial.println(" volts");
-  Serial.print("Battert Percent 25%/50%/75% should be: "); Serial.print(((VMAX - VMIN) / 4) + VMIN); Serial.print("/"); Serial.print(((VMAX - VMIN) / 2) + VMIN); Serial.print("/"); Serial.println(VMAX - ((VMAX - VMIN) / 4));
+  Serial.print("Battery Percent 25%/50%/75% calculates to: "); Serial.print(((VMAX - VMIN) / 4) + VMIN); Serial.print("/"); Serial.print(((VMAX - VMIN) / 2) + VMIN); Serial.print("/"); Serial.println(VMAX - ((VMAX - VMIN) / 4));
   delay(1000);
   int sensorValue = analogRead(BATTERY_SENSE_PIN);
   delay(50);
@@ -65,8 +65,10 @@ void MeasureBattery() //The battery calculations
   // Calculate the battery in %
   float Vbat  = sensorValue * VBAT_PER_BITS;
   int batteryPcnt = static_cast<int>(((Vbat - VMIN) / (VMAX - VMIN)) * 100.);
+#ifdef MY_DEBUG
   Serial.print("Battery percent: "); Serial.print(batteryPcnt); Serial.print(" %"); Serial.print("Battery Voltage: "); Serial.print(Vbat); Serial.println(" Volts");
-
+#endif
+  
   // Add it to array so we get an average of 3 (3x20min)
   batArray[batLoop] = batteryPcnt;
 
@@ -77,8 +79,9 @@ void MeasureBattery() //The battery calculations
     if (batteryPcnt > 100) {
       batteryPcnt = 100;
     }
-
+#ifdef MY_DEBUG
     Serial.print("Battery Average (Send): "); Serial.print(batteryPcnt); Serial.println(" %");
+#endif
     sendBatteryLevel(batteryPcnt);
     batLoop = 0;
   }
