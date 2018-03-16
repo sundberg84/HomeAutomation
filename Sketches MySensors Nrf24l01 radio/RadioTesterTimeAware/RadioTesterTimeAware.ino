@@ -28,7 +28,7 @@
  */
 
 // Enable debug prints
-// #define MY_DEBUG
+#define MY_DEBUG
 
 // Enable and select radio type attached
 #define MY_RADIO_NRF24
@@ -36,16 +36,19 @@
 
 #define NODE_ID 4                               // Node ID or AUTO to let controller assign
 
-#include <MySensors.h>
+#include <SPI.h>
+#include <MySensors.h>  
 
-boolean timeReceived = false;
+bool timeReceived = false;
 unsigned long lastUpdate=0, lastRequest=0;
 
 // Initialize motion message
 
 void setup()
 {
-	pinMode(DIGITAL_INPUT_SENSOR, INPUT);      // sets the motion sensor digital pin as input
+
+    requestTime();  
+  
 }
 
 void presentation()
@@ -53,49 +56,34 @@ void presentation()
 	// Send the sketch version information to the gateway and Controller
 	sendSketchInfo("RadioTest", "1.0");
 
-        requestTime(receiveTime);  
         
 }
 
 // This is called when a new time value was received
-void receiveTime(unsigned long time) {
+void receiveTime(unsigned long controllerTime) {
   // Ok, set incoming time 
-  setTime(time);
+  Serial.print("Time value received: ");
+  Serial.println(controllerTime);
   timeReceived = true;
 }
 
-   // If no time has been received yet, request it every 10 second from controller
+
+void loop()     
+{     
+  unsigned long now = millis();
+
+  // If no time has been received yet, request it every 10 second from controller
   // When time has been received, request update every hour
   if ((!timeReceived && (now-lastRequest) > (10UL*1000UL))
     || (timeReceived && (now-lastRequest) > (60UL*1000UL*60UL))) {
     // Request time from controller. 
     Serial.println("requesting time");
-    requestTime(receiveTime);  
+    requestTime();  
     lastRequest = now;
   }
-  
-  // Print time every second
-  if (timeReceived && now-lastUpdate > 1000) {
-    Serial.print(hour());
-    printDigits(minute());
-    printDigits(second());
-    Serial.print(" ");
-    Serial.print(day());
-    Serial.print(" ");
-    Serial.print(month());
-    Serial.print(" ");
-    Serial.print(year()); 
-    Serial.println(); 
+
+  // Update display every second
+  if (now-lastUpdate > 1000) {;  
     lastUpdate = now;
   }
 }
-
-void printDigits(int digits){
-  // utility function for digital clock display: prints preceding colon and leading 0
-  Serial.print(":");
-  if(digits < 10)
-    Serial.print('0');
-  Serial.print(digits);
-}
-
-
