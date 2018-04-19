@@ -1,0 +1,297 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:as_pcb_footprints
+LIBS:MysXDimmer-cache
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L CONN_01X02 P1
+U 1 1 5A70C258
+P 3265 2355
+F 0 "P1" H 3265 2505 50  0000 C CNN
+F 1 "CONN_12vDC" V 3365 2355 50  0000 C CNN
+F 2 "mysensors_connectors:TerminalBlock2.54mmx2-kcswalter" H 3265 2355 50  0001 C CNN
+F 3 "" H 3265 2355 50  0000 C CNN
+	1    3265 2355
+	0    -1   -1   0   
+$EndComp
+$Comp
+L CONN_01X02 P3
+U 1 1 5A70C326
+P 4000 2350
+F 0 "P3" H 4000 2500 50  0000 C CNN
+F 1 "CONN_LED" V 4100 2350 50  0000 C CNN
+F 2 "mysensors_connectors:TerminalBlock2.54mmx2-kcswalter" H 4000 2350 50  0001 C CNN
+F 3 "" H 4000 2350 50  0000 C CNN
+	1    4000 2350
+	0    -1   -1   0   
+$EndComp
+$Comp
+L CONN_02X06 P2
+U 1 1 5A70C5B0
+P 3290 3430
+F 0 "P2" H 3290 3780 50  0000 C CNN
+F 1 "MysX" H 3290 3080 50  0000 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x06_Pitch2.54mm" H 3290 2230 50  0001 C CNN
+F 3 "" H 3290 2230 50  0000 C CNN
+	1    3290 3430
+	1    0    0    -1  
+$EndComp
+NoConn ~ 3540 3180
+NoConn ~ 3040 3380
+NoConn ~ 3540 3380
+NoConn ~ 3040 3480
+NoConn ~ 3540 3480
+Text GLabel 1885 3625 3    60   Input ~ 0
+12v
+Text GLabel 3345 2625 2    60   Input ~ 0
+12v
+$Comp
+L GND #PWR01
+U 1 1 5A70CFA7
+P 2290 3010
+F 0 "#PWR01" H 2290 2760 50  0001 C CNN
+F 1 "GND" H 2290 2860 50  0000 C CNN
+F 2 "" H 2290 3010 50  0000 C CNN
+F 3 "" H 2290 3010 50  0000 C CNN
+	1    2290 3010
+	0    -1   -1   0   
+$EndComp
+$Comp
+L GND #PWR02
+U 1 1 5A70CFC8
+P 3600 3280
+F 0 "#PWR02" H 3600 3030 50  0001 C CNN
+F 1 "GND" H 3600 3130 50  0000 C CNN
+F 2 "" H 3600 3280 50  0000 C CNN
+F 3 "" H 3600 3280 50  0000 C CNN
+	1    3600 3280
+	0    -1   -1   0   
+$EndComp
+$Comp
+L GND #PWR03
+U 1 1 5A70D0D2
+P 3215 2590
+F 0 "#PWR03" H 3215 2340 50  0001 C CNN
+F 1 "GND" H 3215 2440 50  0000 C CNN
+F 2 "" H 3215 2590 50  0000 C CNN
+F 3 "" H 3215 2590 50  0000 C CNN
+	1    3215 2590
+	1    0    0    -1  
+$EndComp
+$Comp
+L +5V #PWR04
+U 1 1 5A70D1DF
+P 3000 3280
+F 0 "#PWR04" H 3000 3130 50  0001 C CNN
+F 1 "+5V" H 3000 3420 50  0000 C CNN
+F 2 "" H 3000 3280 50  0000 C CNN
+F 3 "" H 3000 3280 50  0000 C CNN
+	1    3000 3280
+	0    -1   -1   0   
+$EndComp
+$Comp
+L +5V #PWR05
+U 1 1 5A70D214
+P 1885 2425
+F 0 "#PWR05" H 1885 2275 50  0001 C CNN
+F 1 "+5V" H 1885 2565 50  0000 C CNN
+F 2 "" H 1885 2425 50  0000 C CNN
+F 3 "" H 1885 2425 50  0000 C CNN
+	1    1885 2425
+	1    0    0    -1  
+$EndComp
+Text GLabel 2935 3580 0    60   Input ~ 0
+LED1
+Text GLabel 4030 4030 0    60   Input ~ 0
+LED1
+Text GLabel 4505 3195 1    60   Input ~ 0
+12vLed
+Text GLabel 3950 2580 3    60   Input ~ 0
+12vLed
+NoConn ~ 3540 3580
+NoConn ~ 3540 3680
+NoConn ~ 3040 3680
+$Comp
+L IRF540N Q1
+U 1 1 5A70E428
+P 4405 3515
+F 0 "Q1" H 4655 3590 50  0000 L CNN
+F 1 "IRLZ44" H 4655 3515 50  0000 L CNN
+F 2 "TO_SOT_Packages_THT:TO-220-3_Horizontal" H 4655 3440 50  0000 L CIN
+F 3 "" H 4405 3515 50  0000 L CNN
+	1    4405 3515
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R1
+U 1 1 5A70E4E1
+P 4145 3820
+F 0 "R1" V 4225 3820 50  0000 C CNN
+F 1 "R" V 4145 3820 50  0000 C CNN
+F 2 "Resistors_ThroughHole:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 4075 3820 50  0001 C CNN
+F 3 "" H 4145 3820 50  0000 C CNN
+	1    4145 3820
+	1    0    0    -1  
+$EndComp
+Text GLabel 4100 2620 2    60   Input ~ 0
+12v
+$Comp
+L GND #PWR06
+U 1 1 5A70ED05
+P 4550 3770
+F 0 "#PWR06" H 4550 3520 50  0001 C CNN
+F 1 "GND" H 4550 3620 50  0000 C CNN
+F 2 "" H 4550 3770 50  0000 C CNN
+F 3 "" H 4550 3770 50  0000 C CNN
+	1    4550 3770
+	0    -1   -1   0   
+$EndComp
+$Comp
+L GND #PWR07
+U 1 1 5A70F8A7
+P 2380 2495
+F 0 "#PWR07" H 2380 2245 50  0001 C CNN
+F 1 "GND" H 2380 2345 50  0000 C CNN
+F 2 "" H 2380 2495 50  0000 C CNN
+F 3 "" H 2380 2495 50  0000 C CNN
+	1    2380 2495
+	0    -1   -1   0   
+$EndComp
+$Comp
+L GND #PWR08
+U 1 1 5A70F8CA
+P 1415 3530
+F 0 "#PWR08" H 1415 3280 50  0001 C CNN
+F 1 "GND" H 1415 3380 50  0000 C CNN
+F 2 "" H 1415 3530 50  0000 C CNN
+F 3 "" H 1415 3530 50  0000 C CNN
+	1    1415 3530
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3215 2590 3215 2555
+Wire Wire Line
+	2235 3010 2290 3010
+Wire Wire Line
+	3600 3280 3540 3280
+Wire Wire Line
+	3345 2625 3315 2625
+Wire Wire Line
+	3315 2625 3315 2555
+Wire Wire Line
+	3000 3280 3040 3280
+Wire Wire Line
+	4100 2620 4050 2620
+Wire Wire Line
+	4050 2620 4050 2550
+Wire Wire Line
+	2935 3580 3040 3580
+Wire Wire Line
+	4505 3715 4505 3770
+Wire Wire Line
+	4505 3770 4550 3770
+Wire Wire Line
+	4505 3195 4505 3315
+Wire Wire Line
+	3950 2580 3950 2550
+Wire Wire Line
+	4030 4030 4145 4030
+Wire Wire Line
+	4205 3565 4145 3565
+Wire Wire Line
+	4145 3565 4145 3670
+Wire Wire Line
+	4145 4030 4145 3970
+$Comp
+L LM2940/LM2940C U1
+U 1 1 5A736B86
+P 1885 3010
+F 0 "U1" H 1685 2810 60  0000 C CNN
+F 1 "LM2940/LM2940C" H 1885 3260 60  0000 C CNN
+F 2 "TO_SOT_Packages_THT:TO-220-3_Horizontal" H 1885 3010 60  0001 C CNN
+F 3 "" H 1885 3010 60  0001 C CNN
+	1    1885 3010
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	1885 2425 1885 2560
+Wire Wire Line
+	1885 2495 2005 2495
+Connection ~ 1885 2495
+Wire Wire Line
+	2305 2495 2380 2495
+Wire Wire Line
+	1415 3530 1480 3530
+Wire Wire Line
+	1780 3530 1885 3530
+Wire Wire Line
+	1885 3460 1885 3625
+Connection ~ 1885 3530
+Text GLabel 2790 3180 0    60   Input ~ 0
+12v
+Wire Wire Line
+	3040 3180 2790 3180
+$Comp
+L CP1 C2
+U 1 1 5AAD62E2
+P 1630 3530
+F 0 "C2" H 1655 3630 50  0000 L CNN
+F 1 "CP1" H 1655 3430 50  0000 L CNN
+F 2 "Capacitors_ThroughHole:CP_Radial_D5.0mm_P2.50mm" H 1630 3530 50  0001 C CNN
+F 3 "" H 1630 3530 50  0000 C CNN
+	1    1630 3530
+	0    1    1    0   
+$EndComp
+$Comp
+L CP1 C1
+U 1 1 5AAD68E8
+P 2155 2495
+F 0 "C1" H 2180 2595 50  0000 L CNN
+F 1 "CP1" H 2180 2395 50  0000 L CNN
+F 2 "Capacitors_ThroughHole:CP_Radial_D5.0mm_P2.50mm" H 2155 2495 50  0001 C CNN
+F 3 "" H 2155 2495 50  0000 C CNN
+	1    2155 2495
+	0    -1   -1   0   
+$EndComp
+$EndSCHEMATC
