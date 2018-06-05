@@ -4,4 +4,5 @@ Rev 1
 Layout with MysX connector.
 Different edges to show EasyPCB layout
 
-
+Rev 2
+Now shows a layout for Easy PCB Rev 10
