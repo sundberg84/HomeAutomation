@@ -1,17 +1,18 @@
-/ Enable debug prints
+// Enable debug prints
 #define MY_DEBUG
 
 // Enable and select radio type attached
 #define MY_RADIO_NRF24
 //#define MY_RADIO_RFM69
 
-#define MY_NODE_ID 20
+#define MY_NODE_ID 11
+#define MY_REPEATER_FEATURE
 
 #include <SPI.h>
 #include <MySensors.h>
 
-#define CHILD_ID_Motion 2   // Id of the sensor child
-#define DIGITAL_INPUT_SENSOR 4   // The digital input you attached your motion sensor.  (Only 2 and 3 generates interrupt!)
+#define CHILD_ID_Motion 1   // Id of the sensor child
+#define DIGITAL_INPUT_SENSOR 5   // The digital input you attached your motion sensor.  (Only 2 and 3 generates interrupt!)
 int oldTripped = 0;
 int tripped = 0;
 
@@ -32,10 +33,10 @@ void setup()
 
 void presentation()  {
   // Send the sketch version information to the gateway and Controller
-  sendSketchInfo("Dimmer Kitchen", "1.0");
+  sendSketchInfo("Motion/Led Vardagsrum #11", "1.0");
 
   // Register all sensors to gw (they will be created as child devices)
-  present(CHILD_ID, S_MOTION);
+  present(CHILD_ID_Motion, S_MOTION);
   wait(10);
   present( 0, S_DIMMER );
 }
