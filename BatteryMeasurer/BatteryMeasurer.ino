@@ -73,7 +73,7 @@ void MeasureBattery() //The battery calculations
   batArray[batLoop] = batteryPcnt;
 
   if (batLoop > 2) {
-    batteryPcnt = (batArray[0] + batArray[1] + batArray[2] + batArray[3]);
+    batteryPcnt = (batArray[0] + batArray[1] + batArray[2]);
     batteryPcnt = batteryPcnt / 3;
 
     if (batteryPcnt > 100) {
