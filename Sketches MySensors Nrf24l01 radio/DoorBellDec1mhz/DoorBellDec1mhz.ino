@@ -26,7 +26,7 @@ unsigned long SLEEP_TIME = 86400000; // Sleep time between reports (in milliseco
 #define CHILD_ID 0
 int dayCounter = BATTERY_REPORT_DAY;
 int irtCounter = 0;
-bool interruptReturn = false; // "false" will make the first loop disregard high output from HV-505 (from start-up) and make a battery report instead.
+int interruptReturn = 0; // "false" will make the first loop disregard high output from HV-505 (from start-up) and make a battery report instead.
 int tripped = 0;
 
 
@@ -58,7 +58,7 @@ void loop()
   Serial.print("Wakeupcall: "); Serial.println(interruptReturn);
 #endif
 
-  if (interruptReturn == true) {    // Woke up by changing pin
+  if (interruptReturn == MY_SLEEP_NOT_POSSIBLE) {    // Woke up by changing pin
     send(msg.set("1"));
     }
 
@@ -68,7 +68,7 @@ void loop()
       sendBatteryReport();
     }
 
-  if (interruptReturn == false) { // Woke up by timer  (or it's the first run)
+  if (interruptReturn == MY_WAKE_UP_BY_TIMER) { // Woke up by timer  (or it's the first run)
     dayCounter++;
     if (dayCounter >= BATTERY_REPORT_DAY) {
       dayCounter = 0;
