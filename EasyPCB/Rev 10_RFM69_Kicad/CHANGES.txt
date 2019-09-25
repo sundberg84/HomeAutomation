@@ -1,0 +1,99 @@
+Modifications made by Licensee (see section 3.4.b in )
+
+Rev 1
+PCB with connections for a MySensors node using Arduino Pro Mini (5V or 3.3v), NRF24L01, booster and voltage divider (if battery operated), and input for different sensors.
+
+This is a PCB that only contains the basic functions for MySensors but is somewhat dynamic. The main goal was to eliminate the build time soldering wires between the Arduino Pro Mini and the Radio. Its a PCB for all newbies that wants to do basic nodes like myself out there... :)
+
+Rev 2
+- New layout for voltage regulator.
+- New position for radio
+- New position for booster
+(Never made production)
+
+Rev 3
+- Added troughholes in corner to be able to cut pcb
+- Moved input for sensors to the left
+- Added resistor for D3 if DHT22 or Dallas temp sensors wants to be used
+- Added jumper for Bat/5v
+- Added caps for voltage regulator
+
+Rev 4
+- Added alot of text on silk to make it easier to understand.
+- Removed troughholes in corners
+- Added prototyping area
+- Moved booster and voltage divider to be able to cut PCB (and remove) if this components isnt needed.
+- Changed several components from SMD to throughholes (all components are now throughholes)
+- Added RAW input
+- Added open hardware logo
+
+Rev 5
+- Added GND throughholes on top
+
+Rev 6
+- New wiring (lost original files)
+- Changed position of BAT/REG jumper 
+
+Rev 6
+- Complete rebuild of PCB with less VIA.
+- Removed GND throughholes on top
+- Added more information on silkmask
+- Changed orientation of caps to voltage divider
+- Removed info at sensor input (by misstake)
+- Changed location for caps to voltage divider
+- Added 4,7 cap for radio
+
+Rev 7
+- Changed sensor input to MYSX 1.4
+- New wiring due to this
+- Changed prototyping area and added VCC/GND in two rows
+
+Rev 8
+- New design to make it even smaller (radio not sticking out so much)
+- Moved NRF lower, Arduino footprint to the left.
+- New location for voltage regulator and caps.
+- Moved cap for radio some to make space
+- Moved jumper for RAW (MYSX) to make space
+- More prototyping area
+- Rotated and moved BAT/REG jumpers some
+- Added my logo (with open hardware logo)
+- Moved drillholes for screws some (and added one).
+
+Rev 9
+- Bigger mounting holes 2.5mm
+- IRQ Jumper from Radio. This makes this trace disabled and D2 can be used for interupts unless jumper is connected.
+- BAT and REG jumpers changed positions for better tracing.
+- MysX 2,6
+- Text on voltage regulater (Vout/Vin/Gnd)
+- Bug with G on CAP now on the right side.
+- GND and VCC swapped - so you could use a 2 pin block for GND/RAW as well.
+- Capacitor to filter the booster output more (optional)
+
+Rev 9 - RFM69 Edition
+- Everything Remodeled in KiCad (with same purpose - EASY and Newbie board!)
+- This edition uses transiever RFM69 H/HW (and not Nrf24l01+ as other rev).
+  - Major changes in routing due to this.
+- Some changes in power due to 3.3v RFM69 inputs tolerance.
+  - Note, this edition can only handle Pro Mini 3.3v and NOT 5v.
+- Changed capacitor silkmask (now round, easier to understand)
+- Added external antenna connector (SMA and DIY connector)
+- Appearance might be different in this edition due to move from Eagles to CAD.
+
+Rev 10 - RFM69 Edition
+- MysX location changed to accept more MysX boards and align like Nrf24 version.
+- Antenna location changed, radio rotated 180 degrees
+- Optional signing chip added
+- Optional SPI flash added.
+- Extra pins aligned to 2.45 vertical & horisontal
+- Relocated Extra + Bat Measurer some to allow more space to booster
+- Pin holes added for RFM Radio
+- Changed pull-up resistor from D3 to D5 to have one more pin for Interrupt
+
+Rev 10.1 - RFM69 Edition
+- Corrected a bug with flash not connected correctly
+- Corrected a bug with flash capacitor not connected correctly
+
+
+
+
+
